@@ -1,0 +1,60 @@
+dataset: gazehoi
+
+# Fill these in with where you downloaded GazeHOI to (see README's Data Preparation section).
+raw_images_dir: /path/to/GazeHOI/raw_images
+eval_csv: /path/to/GazeHOI/GazeHOI_test-annotations.csv
+annotations_csv: /path/to/GazeHOI/semgaze-data/data/gazehoi/test-annotations.csv
+vocab_path: /path/to/GazeHOI/vocab.json
+
+# Train-side source for scripts/build_cls_embeddings.py (raw_images_dir above is the shared train+test pool).
+train_annotations_csv: /path/to/GazeHOI/GazeHOI_train-annotations.csv
+train_embeds: outputs/cls_embeddings_gazehoi/train_embeds.npy
+train_meta: outputs/cls_embeddings_gazehoi/train_meta.csv
+label_column: gt_object   # GazeHOI's CLS meta uses "gt_object", not GazeFollow's "gt_label"
+
+# Every auto-downloaded model shares this one folder, downloading on
+# first use and loading from cache after that. No manual pre-download step.
+model_cache_dir: model_cache
+qwen_model: Qwen3-VL-2B-Instruct   # bare name, resolved to Qwen/<name>; swap size by changing this
+gazelle_repo: fkryan/gazelle
+gazelle_model: gazelle_dinov2_vitl14_inout
+clip_model: openai/clip-vit-base-patch32
+device: cuda
+
+# Visual-prompt drawing style
+style: arrow            # arrow | dot | heatmap
+color: blue              # red | yellow | green | blue | [R,G,B]
+arrow_width: 4
+dot_radius: 6
+heatmap_alpha: 0.5
+
+# Optional debug save of the drawn prompt image and heatmap. Not needed
+# for the pipeline itself (grounding reuses the in-memory heatmap the
+# same iteration), but save_heatmaps keeps scripts/reground.py's
+# recompute-without-VLM workflow working.
+query_images_dir: outputs/gazehoi_visual_prompts
+save_visual_prompts: true
+save_heatmaps: true
+
+output_dir: outputs
+
+top_n: 3
+rag_top_k: 6
+temperature: 0.0
+max_new_tokens_stage1: 32
+max_new_tokens_stage2: 32
+
+uncertainty_threshold: dynamic
+dynamic_batch_size: 10
+
+seed: 42
+
+# Grounding
+grounding_enabled: true
+detector: rfdetr            # rfdetr | yolo26 | sam3
+rfdetr_variant: 2xlarge      # 2xlarge | seg2xlarge
+yolo26_weights: yolo26n.pt
+sam3_checkpoint: facebook/sam3
+iou_threshold: 0.5
+detector_confidence_threshold: 0.3
+grounding_mode: sqrt_norm_heatmap    # gaze_point | heatmap | sqrt_norm_heatmap | all

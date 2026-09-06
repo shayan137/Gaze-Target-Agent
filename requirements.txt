@@ -1,0 +1,12 @@
+torch>=2.4
+torchvision
+timm
+transformers>=5.10
+accelerate>=0.30
+huggingface_hub
+pillow
+numpy
+pandas
+pyyaml
+ultralytics
+rfdetr

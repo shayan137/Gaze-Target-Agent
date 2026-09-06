@@ -1,0 +1,47 @@
+dataset: gazefollow
+
+# Fill these in with where you downloaded GazeFollow to (see README's Data Preparation section).
+raw_images_dir: /path/to/GazeFollow/train_test_images
+annotations_txt: /path/to/GazeFollow/train_test_images/test_annotations_release.txt
+gt_csv: /path/to/GazeFollow/gaze-labels-test.csv
+vocab_path: /path/to/GazeFollow/vocab.json
+
+# Train-side source for scripts/build_cls_embeddings.py (raw_images_dir above is the shared parent for train/ and test2/).
+train_labels_csv: /path/to/GazeFollow/gaze-labels-train.csv
+train_embeds: outputs/cls_embeddings_gazefollow/train_embeds.npy
+train_meta: outputs/cls_embeddings_gazefollow/train_meta.csv
+
+# Every auto-downloaded model shares this one folder, downloading on
+# first use and loading from cache after that. No manual pre-download step.
+model_cache_dir: model_cache
+qwen_model: Qwen3-VL-2B-Instruct   # bare name, resolved to Qwen/<name>; swap size by changing this
+gazelle_repo: fkryan/gazelle
+gazelle_model: gazelle_dinov2_vitl14_inout
+clip_model: openai/clip-vit-base-patch32
+device: cuda
+
+# Visual-prompt drawing style
+style: arrow            # arrow | dot | heatmap
+color: blue              # red | yellow | green | blue | [R,G,B]
+arrow_width: 4
+dot_radius: 6
+heatmap_alpha: 0.5
+
+# Optional debug save of the drawn prompt image, not needed for the
+# pipeline itself since everything runs in one in-memory pass.
+query_images_dir: outputs/gazefollow_visual_prompts
+save_visual_prompts: true
+
+output_dir: outputs
+
+top_n: 3
+rag_top_k: 6
+temperature: 0.0
+max_new_tokens_stage1: 32
+max_new_tokens_stage2: 32
+
+# A number (e.g. 0.25) for a fixed threshold, or "dynamic". See source/threshold.py.
+uncertainty_threshold: dynamic
+dynamic_batch_size: 10
+
+seed: 42
