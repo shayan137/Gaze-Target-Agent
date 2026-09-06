@@ -1,4 +1,4 @@
-<h2 align="center">From Gaze to Meaning: A Training-Free<br/>AI Agent for Unified Grounding and Explanation</h2>
+<h3 align="center">From Gaze to Meaning: A Training-Free<br/>AI Agent for Unified Grounding and Explanation</h3>
 <p align="center"><b>Shayan Nasiriboukani, Sara Atito, Mohammad Nezamipour, Muhammad Awais</b><br/>
 Centre for Vision, Speech and Signal Processing (CVSSP), University of Surrey, UK</p>
 
