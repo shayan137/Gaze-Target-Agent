@@ -1,4 +1,5 @@
 <h2 align="center">From Gaze to Meaning: A Training-Free<br/>AI Agent for Unified Grounding and Explanation</h2>
+
 <p align="center"><b>Shayan Nasiriboukani, Sara Atito, Mohammad Nezamipour, Muhammad Awais</b><br/>
 Centre for Vision, Speech and Signal Processing (CVSSP), University of Surrey, UK</p>
 
@@ -8,15 +9,15 @@ Centre for Vision, Speech and Signal Processing (CVSSP), University of Surrey, U
   <a href="https://shayan137.github.io/gta-project-page/"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a>
   <img src="https://img.shields.io/badge/ECCV-2026-4b44ce.svg" alt="ECCV 2026">
 </p>
-
 ---
 
-**Gaze Target Agent (GTA)** is the first **training-free** agent for
+**Gaze Target Agent (GTA)** is, to our knowledge, the first **training-free** agent for
 gaze-guided reasoning: gaze target prediction, attention localization, and object
 identification, all from a single pretrained vision-language model. GTA augments a frozen
 VLM with **gaze-guided visual prompting**, rescues low-confidence predictions with a
-**memory-based (RAG) retrieval** step, and **grounds** the predicted label to a
-bounding box. GTA reaches state-of-the-art results on the GazeFollow and GazeHOI benchmarks.
+**memory-based (RAG) retrieval** step, and optionally **grounds** the predicted label to a
+bounding box, with no fine-tuning anywhere in the loop. GTA reaches state-of-the-art
+results on the GazeFollow and GazeHOI benchmarks.
 
 <p align="center">
   <img src="figs/architecture.png" width="100%" alt="Gaze Target Agent architecture">
@@ -45,19 +46,22 @@ key, `gt_csv` / `eval_csv`), plus `vocab_path` (the valid label list):
 
 ## 🔨 Usage
 ```bash
-python scripts/build_cls_embeddings.py --config configs/gazefollow.yaml   # one-time, per dataset
 python scripts/run_agent.py --config configs/gazefollow.yaml
 ```
-One per-sample pass, with no separate stages: GazeLLE gaze prediction, then visual
-prompt, then Qwen3-VL top-3, then retrieval rescue if uncertain, before moving to the
-next image.
+One command runs the whole thing. On first use it builds the training CLS embeddings
+and saves them (this only happens once per dataset; later runs load the saved file
+directly), then processes the test set one sample at a time, in one pass: GazeLLE gaze
+prediction, visual prompt, Qwen3-VL top-3, and retrieval rescue if uncertain.
 
 For GazeHOI, the same pass adds a grounding step, localizing the prediction to a
 bounding box:
 ```bash
-python scripts/build_cls_embeddings.py --config configs/gazehoi.yaml
 python scripts/run_gazehoi_agent.py --config configs/gazehoi.yaml
 ```
+
+To rebuild the training embeddings by hand (e.g. after changing `clip_model`), run
+`python scripts/build_cls_embeddings.py --config configs/gazefollow.yaml` directly.
+This is optional, since the commands above already do it automatically when needed.
 
 ## 🗂️ Code Structure
 ```
@@ -87,7 +91,6 @@ scripts/
 configs/
   gazefollow.yaml, gazehoi.yaml  # one config per dataset
 ```
-
 
 ## 📑 Citation
 ```bibtex
