@@ -34,8 +34,7 @@ into one shared, repo-local folder, `model_cache_dir`.
 ## 📦 Data Preparation
 Download the two benchmarks and point each dataset's `configs/*.yaml` at where you put
 them (`raw_images_dir`, the annotation files, `vocab_path`):
-- **[GazeFollow](https://huggingface.co/datasets/vikhyatk/gazefollow)** -- raw images +
-  gaze annotations.
+- **[GazeFollow](https://huggingface.co/datasets/vikhyatk/gazefollow)** -- raw images, head-bbox annotations, and target-object labels.
 - **[GazeHOI](https://github.com/idiap/semgaze)** -- raw images, head/object-bbox
   annotations, **and the object label files for both datasets**.
 
