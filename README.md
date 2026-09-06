@@ -1,4 +1,6 @@
 <h2 align="center">From Gaze to Meaning: A Training-Free<br/>AI Agent for Unified Grounding and Explanation</h2>
+<p align="center"><b>Shayan Nasiriboukani, Sara Atito, Mohammad Nezamipour, Muhammad Awais</b><br/>
+Centre for Vision, Speech and Signal Processing (CVSSP), University of Surrey, UK</p>
 
 <p align="center">
   <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg?logo=arXiv" alt="arXiv"></a>
@@ -6,9 +8,6 @@
   <a href="https://shayan137.github.io/gta-project-page/"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a>
   <img src="https://img.shields.io/badge/ECCV-2026-4b44ce.svg" alt="ECCV 2026">
 </p>
-
-<p align="center"><b>Shayan Nasiriboukani, Sara Atito, Mohammad Nezamipour, Muhammad Awais</b><br/>
-Centre for Vision, Speech and Signal Processing (CVSSP), University of Surrey, UK</p>
 
 ---
 
