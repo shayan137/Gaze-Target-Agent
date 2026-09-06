@@ -1,21 +1,14 @@
-<h3 align="center">From Gaze to Meaning: A Training-Free<br/>AI Agent for Unified Grounding and Explanation</h3>
+<h1 align="center">From Gaze to Meaning: A Training-Free<br/>AI Agent for Unified Grounding and Explanation</h1>
 <p align="center"><b>Shayan Nasiriboukani, Sara Atito, Mohammad Nezamipour, Muhammad Awais</b><br/>
 Centre for Vision, Speech and Signal Processing (CVSSP), University of Surrey, UK</p>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/XXXX.XXXXX">
-    <img src="https://img.shields.io/badge/arXiv-XXXX.XXXXX-red.svg?logo=arXiv" alt="arXiv">
-  </a>
-  <a href="https://eccv.ecva.net/virtual/2026/poster/5517">
-    <img src="https://img.shields.io/badge/ECCV-2026-blue.svg" alt="ECCV 2026">
-  </a>
-  <a href="https://shayan137.github.io/gta-project-page/">
-    <img src="https://img.shields.io/badge/Project-Page-orange.svg" alt="Project Page">
-  </a>
+  <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/badge/arXiv-XXXX.XXXXX-red.svg?logo=arXiv" alt="arXiv"></a>&nbsp;
+  <a href="https://eccv.ecva.net/virtual/2026/poster/5517"><img src="https://img.shields.io/badge/ECCV-2026-blue.svg" alt="ECCV 2026"></a>&nbsp;
+  <a href="https://shayan137.github.io/gta-project-page/"><img src="https://img.shields.io/badge/Project-Page-orange.svg" alt="Project Page"></a>
 </p>
 
 **Gaze Target Agent (GTA)** is, to our knowledge, the first fully **training-free agent for gaze-guided visual reasoning**. It uses gaze to guide a vision-language model toward the attended region, identifies the gaze target, and optionally grounds it with a bounding box.
-
 GTA combines **gaze-guided visual prompting**, **uncertainty-aware retrieval**, and **object grounding**, using only frozen pretrained models and no fine-tuning.
 
 ## Key Points
@@ -25,34 +18,16 @@ GTA combines **gaze-guided visual prompting**, **uncertainty-aware retrieval**, 
 * **Uncertainty-aware retrieval:** Similar examples are retrieved only when the prediction is uncertain.
 * **Unified prediction and grounding:** GTA identifies the attended object and can localize it in the image.
 
+## Method
+
 <p align="center">
   <img src="figs/architecture.png" width="100%" alt="Gaze Target Agent architecture">
 </p>
 
-## Method
 
 GTA follows a simple training-free pipeline. It first estimates the gaze target and converts it into a visual prompt. The VLM then predicts the attended object and estimates its confidence. If the prediction is uncertain, similar examples are retrieved from memory and used to refine the answer. For GazeHOI, GTA can additionally ground the predicted object with a bounding box.
 
-```text
-Image + Head
-     ↓
-Gaze Estimation
-     ↓
-Gaze-Guided Visual Prompt
-     ↓
-VLM Prediction + Uncertainty
-     ↓
-High uncertainty?
-   ↙       ↘
- Yes       No
-  ↓         ↓
-Retrieval   │
-+ Re-predict│
-   ↘       ↙
- Final Object Prediction
-         ↓
- Optional Object Grounding
-```
+
 
 ## Installation
 
@@ -64,28 +39,17 @@ pip install -r requirements.txt
 
 The required models, including **Qwen3-VL, GazeLLE, CLIP, and the grounding detector**, are downloaded automatically on first use into the directory specified by `model_cache_dir`.
 
-Models can be changed directly in the configuration file. For example:
+## 📦 Data Preparation
 
-```yaml
-qwen_model: Qwen3-VL-4B-Instruct
-```
+Download the two benchmarks:
 
-## Data Preparation
+- **[GazeFollow](https://huggingface.co/datasets/vikhyatk/gazefollow)**: images, head bounding-box annotations, and gaze-target labels.
+- **[GazeHOI](https://github.com/idiap/semgaze)**: images, head/object annotations, and object labels.
 
-Download the benchmarks and update their paths in `configs/*.yaml`.
+Then update the dataset paths in `configs/gazefollow.yaml` or `configs/gazehoi.yaml`.
 
-* **[GazeFollow](https://huggingface.co/datasets/vikhyatk/gazefollow):** images, head annotations, target labels, and vocabulary.
-* **[GazeHOI](https://github.com/idiap/semgaze):** images, head/object annotations, target labels, and vocabulary.
 
-Main configuration fields:
-
-```text
-annotations_txt / annotations_csv   Head annotations
-gt_csv / eval_csv                   Ground-truth target labels
-vocab_path                          Target-object vocabulary
-```
-
-## Usage
+## 🔨 Usage
 
 ### GazeFollow
 
@@ -93,17 +57,17 @@ vocab_path                          Target-object vocabulary
 python scripts/run_agent.py --config configs/gazefollow.yaml
 ```
 
-This runs:
+This runs the full pipeline:
 
 ```text
 Gaze Estimation
 → Visual Prompting
-→ VLM Prediction
-→ Uncertainty Estimation
+→ Qwen3-VL Prediction
+→ Uncertainty Check
 → Retrieval Rescue, if needed
 ```
 
-The retrieval embeddings are automatically created on the first run and reused afterward. This only extracts features from a frozen CLIP model; **no training is performed**.
+On the first run, GTA also builds and saves the training CLIP embeddings used for retrieval. Later runs load them directly.
 
 ### GazeHOI
 
@@ -111,7 +75,7 @@ The retrieval embeddings are automatically created on the first run and reused a
 python scripts/run_gazehoi_agent.py --config configs/gazehoi.yaml
 ```
 
-This runs the same pipeline with an additional **object-grounding** stage.
+GazeHOI follows the same pipeline and adds **object grounding** to localize the predicted target with a bounding box.
 
 To manually rebuild the retrieval embeddings, for example after changing the CLIP model:
 
@@ -119,40 +83,58 @@ To manually rebuild the retrieval embeddings, for example after changing the CLI
 python scripts/build_cls_embeddings.py --config configs/gazefollow.yaml
 ```
 
-## Code Structure
+This step is optional because the main scripts build them automatically when needed.
+
+
+**GazeFollow:**
+
+```bash
+python scripts/run_agent.py --config configs/gazefollow.yaml \
+  --raw-images-dir /path/to/GazeFollow/train_test_images \
+  --annotations-txt /path/to/GazeFollow/train_test_images/test_annotations_release.txt \
+  --gt-csv /path/to/GazeFollow/gaze-labels-test.csv \
+  --vocab-path /path/to/GazeFollow/vocab.json \
+  --train-labels-csv /path/to/GazeFollow/gaze-labels-train.csv
+```
+
+**GazeHOI:**
+
+```bash
+python scripts/run_gazehoi_agent.py --config configs/gazehoi.yaml \
+  --raw-images-dir /path/to/GazeHOI/images \
+  --eval-csv /path/to/GazeHOI/test-annotations.csv \
+  --annotations-csv /path/to/GazeHOI/annotations.csv \
+  --vocab-path /path/to/GazeHOI/vocab.json \
+  --train-annotations-csv /path/to/GazeHOI/train-annotations.csv
+```
+
+Any omitted argument falls back to the value in the YAML file.
+
+Useful optional arguments include:
 
 ```text
+--limit N
+```
+
+Runs only the first `N` samples for quick testing.
+
+
+## 🗂️ Code Structure
+```
 source/
-  agent.py                   # prediction and retrieval rescue
-  config.py                  # YAML configuration
-  prompts.py                 # VLM prompts
-  threshold.py               # uncertainty threshold
-  uncertainty.py             # confidence estimation
-  visual_arrow.py            # gaze-guided visual prompts
-
-  data/
-    dataset.py               # dataset loaders
-    gazefollow_annotations.py
-    gazehoi_annotations.py
-    vocab.py
-    io_utils.py
-    text_utils.py
-
-  models/
-    model.py                 # Qwen3-VL
-    gazelle.py               # gaze estimation
-    retrieval.py             # CLIP retrieval
-    grounding.py             # object grounding
-
+  agent.py                 # GazeTargetAgent.run(): predict -> check -> retrieve
+  model.py                 # Qwen3-VL wrapper
+  gazelle.py                # gaze estimation
+  visual_arrow.py           # gaze-guided visual prompting (arrow/dot/heatmap)
+  retrieval.py              # CLIP CLS retrieval (RAG rescue)
+  grounding.py              # detector + gaze-guided selection + scoring (GazeHOI)
+  dataset.py, config.py, ...
 scripts/
-  build_cls_embeddings.py
-  run_agent.py
-  run_gazehoi_agent.py
-  reground.py
-
+  build_cls_embeddings.py  # one-time per dataset: CLIP embeddings for training images
+  run_agent.py              # GazeFollow entrypoint
+  run_gazehoi_agent.py       # GazeHOI entrypoint (adds grounding)
 configs/
-  gazefollow.yaml
-  gazehoi.yaml
+  gazefollow.yaml, gazehoi.yaml  # one config per dataset
 ```
 
 ## Citation
