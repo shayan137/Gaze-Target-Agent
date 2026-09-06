@@ -12,13 +12,12 @@ Centre for Vision, Speech and Signal Processing (CVSSP), University of Surrey, U
 
 ---
 
-**Gaze Target Agent (GTA)** is, to our knowledge, the first **training-free** agent for
+**Gaze Target Agent (GTA)** is the first **training-free** agent for
 gaze-guided reasoning: gaze target prediction, attention localization, and object
 identification, all from a single pretrained vision-language model. GTA augments a frozen
 VLM with **gaze-guided visual prompting**, rescues low-confidence predictions with a
-**memory-based (RAG) retrieval** step, and optionally **grounds** the predicted label to a
-bounding box -- no fine-tuning anywhere in the loop. GTA reaches state-of-the-art results
-on the GazeFollow and GazeHOI benchmarks.
+**memory-based (RAG) retrieval** step, and **grounds** the predicted label to a
+bounding box. GTA reaches state-of-the-art results on the GazeFollow and GazeHOI benchmarks.
 
 <p align="center">
   <img src="figs/architecture.png" width="100%" alt="Gaze Target Agent architecture">
@@ -30,8 +29,7 @@ cd GazeTargetAgent-main
 pip install -r requirements.txt
 ```
 Every model (Qwen3-VL, GazeLLE, CLIP, the grounding detector) auto-downloads on first use
-into one shared, repo-local folder, `model_cache_dir` -- no manual pre-download step.
-Swap a model by editing its name in the config, e.g. `qwen_model: Qwen3-VL-4B-Instruct`.
+into one shared, repo-local folder, `model_cache_dir`.
 
 ## 📦 Data Preparation
 Download the two benchmarks and point each dataset's `configs/*.yaml` at where you put
@@ -43,11 +41,9 @@ them (`raw_images_dir`, the annotation files, `vocab_path`):
 
 ## 🔨 Usage
 ```bash
-python scripts/build_cls_embeddings.py --config configs/gazefollow.yaml   # one-time, per dataset
+python scripts/build_cls_embeddings.py --config configs/gazefollow.yaml
 python scripts/run_agent.py --config configs/gazefollow.yaml
 ```
-One per-sample pass, no separate stages: GazeLLE gaze prediction -> visual prompt ->
-Qwen3-VL top-3 -> retrieval rescue if uncertain -- before moving to the next image.
 
 For GazeHOI, the same pass adds a grounding step, localizing the prediction to a
 bounding box:
@@ -71,7 +67,7 @@ scripts/
   run_agent.py              # GazeFollow entrypoint
   run_gazehoi_agent.py       # GazeHOI entrypoint (adds grounding)
 configs/
-  gazefollow.yaml, gazehoi.yaml  # one config per dataset
+  gazefollow.yaml, gazehoi.yaml
 ```
 
 ## 📑 Citation
