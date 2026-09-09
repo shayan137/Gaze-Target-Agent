@@ -3,7 +3,7 @@
 Centre for Vision, Speech and Signal Processing (CVSSP), University of Surrey, UK</p>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/badge/arXiv-XXXX.XXXXX-red.svg?logo=arXiv" alt="arXiv"></a>&nbsp;
+  <a href="https://arxiv.org/abs/2609.06208"><img src="https://img.shields.io/badge/arXiv-2609.06208-red.svg?logo=arXiv" alt="arXiv"></a>&nbsp;
   <a href="https://eccv.ecva.net/virtual/2026/poster/5517"><img src="https://img.shields.io/badge/ECCV-2026-blue.svg" alt="ECCV 2026"></a>&nbsp;
   <a href="https://shayan137.github.io/gta-project-page/"><img src="https://img.shields.io/badge/Project-Page-orange.svg" alt="Project Page"></a>
 </p>
