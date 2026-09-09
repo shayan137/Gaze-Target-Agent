@@ -9,4 +9,5 @@ numpy
 pandas
 pyyaml
 ultralytics
-rfdetr==1.0.2
+rfdetr
+rfdetr_plus==1.0.2
